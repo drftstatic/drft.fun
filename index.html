@@ -12,17 +12,21 @@
       text-align: center;
       padding: 2rem;
     }
+
     h1 {
       animation: flicker 1s infinite;
       font-size: 1.8rem;
       text-shadow: 0 0 5px #00ff99;
     }
-    video {
+
+    iframe {
+      margin-top: 2rem;
       width: 100%;
       max-width: 800px;
+      height: 450px;
       border: 2px solid #00ff99;
-      margin-top: 2rem;
     }
+
     a {
       color: #00ff99;
       text-decoration: none;
@@ -30,6 +34,7 @@
       display: inline-block;
       margin-top: 2rem;
     }
+
     @keyframes flicker {
       0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% { opacity: 1; }
       20%, 24%, 55% { opacity: 0; }
@@ -37,6 +42,7 @@
   </style>
 </head>
 <body>
+
   <h1>~ signal locked ~</h1>
 
   <div id="videoContainer"></div>
@@ -48,29 +54,30 @@
   </div>
 
   <script>
-    const videoLinks = [
-      "https://drive.google.com/uc?export=download&id=1ktFSz4EAFJxH4fZSv6cztKoXCRHgU-G4",
-      "https://drive.google.com/uc?export=download&id=1EVGzbbZPWltvUMV33x-zg_GU2EKoBpeQ",
-      "https://drive.google.com/uc?export=download&id=1TVYHZBCq2rhM2-uigpVflA5cxY68dv-j",
-      "https://drive.google.com/uc?export=download&id=1YOQJNjCUv1vUZ7WXzvP3GiU5pcH2moyL",
-      "https://drive.google.com/uc?export=download&id=1uwz2dLrxdgyQjcVazuk4EkCh0sx0SvGa",
-      "https://drive.google.com/uc?export=download&id=1-qHgBQkGrUL2HgZzvYzjz_Pe2xyOjNiL",
-      "https://drive.google.com/uc?export=download&id=1w_EPVvPH8efcmGZtGLu_0Zs4G2OXEPjd",
-      "https://drive.google.com/uc?export=download&id=1z08MMa3GVnyYbH5CcdDwflKa1W1Znp1W",
-      "https://drive.google.com/uc?export=download&id=1XgHHr1yFUzvFJsmDCJXqULN88gFoBCrR",
-      "https://drive.google.com/uc?export=download&id=1rgMR6UtkDnkcZ3XnOPuqUQ6asls3p6Wz"
+    const videoIds = [
+      "1ktFSz4EAFJxH4fZSv6cztKoXCRHgU-G4",
+      "1EVGzbbZPWltvUMV33x-zg_GU2EKoBpeQ",
+      "1TVYHZBCq2rhM2-uigpVflA5cxY68dv-j",
+      "1YOQJNjCUv1vUZ7WXzvP3GiU5pcH2moyL",
+      "1uwz2dLrxdgyQjcVazuk4EkCh0sx0SvGa",
+      "1-qHgBQkGrUL2HgZzvYzjz_Pe2xyOjNiL",
+      "1w_EPVvPH8efcmGZtGLu_0Zs4G2OXEPjd",
+      "1z08MMa3GVnyYbH5CcdDwflKa1W1Znp1W",
+      "1XgHHr1yFUzvFJsmDCJXqULN88gFoBCrR",
+      "1rgMR6UtkDnkcZ3XnOPuqUQ6asls3p6Wz"
     ];
 
     const today = new Date().toDateString();
     const seed = Array.from(today).reduce((sum, char) => sum + char.charCodeAt(0), 0);
-    const index = seed % videoLinks.length;
+    const index = seed % videoIds.length;
+    const selectedId = videoIds[index];
+
+    const embedURL = `https://drive.google.com/file/d/${selectedId}/preview`;
 
     document.getElementById("videoContainer").innerHTML = `
-      <video autoplay loop muted playsinline controls>
-        <source src="${videoLinks[index]}" type="video/mp4">
-        Your browser does not support the video tag.
-      </video>
+      <iframe src="${embedURL}" allow="autoplay"></iframe>
     `;
   </script>
+
 </body>
 </html>
