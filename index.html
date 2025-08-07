@@ -4,32 +4,44 @@
   <meta charset="UTF-8">
   <title>drft.fun // signal acquired.</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   <style>
-    body {
+    html, body {
+      margin: 0;
+      padding: 0;
       background: black;
       color: #00ff99;
       font-family: 'Courier New', monospace;
-      text-align: center;
-      padding: 2rem;
-      margin: 0;
+      height: 100%;
       overflow-x: hidden;
     }
 
+    body {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 2rem 1rem;
+      box-sizing: border-box;
+      position: relative;
+    }
+
     h1 {
-      font-size: 1.6rem;
+      font-size: 1.2rem;
       text-shadow: 0 0 5px #00ff99;
       animation: glitch 1.2s infinite linear;
       white-space: pre-line;
+      text-align: center;
+      margin: 0;
     }
 
     iframe {
-      margin-top: 2rem;
       width: 100%;
-      max-width: 800px;
-      height: 450px;
+      max-width: 960px;
+      aspect-ratio: 16 / 9;
       border: 2px solid #00ff99;
+      margin-top: 2rem;
       z-index: 2;
-      position: relative;
     }
 
     a {
@@ -37,14 +49,13 @@
       text-decoration: none;
       font-weight: bold;
       display: inline-block;
-      margin-top: 2rem;
+      margin-top: 1.2rem;
     }
 
     p {
       margin-top: 2rem;
     }
 
-    /* VHS HUD Scanlines */
     body::before {
       content: "";
       position: fixed;
@@ -57,7 +68,7 @@
         transparent 4px
       );
       pointer-events: none;
-      z-index: 5;
+      z-index: 10;
       animation: flicker 0.3s infinite;
     }
 
@@ -73,6 +84,18 @@
       60% { transform: translate(-1px, 1px); }
       80% { transform: translate(1px, -1px); }
       100% { transform: translate(0); }
+    }
+
+    @media (max-width: 600px) {
+      h1 {
+        font-size: 0.85rem;
+        line-height: 1.2;
+      }
+
+      iframe {
+        max-width: 100%;
+        height: auto;
+      }
     }
   </style>
 </head>
@@ -104,7 +127,7 @@
       "1fHph8jCc4EHfa_Vw9N-fNk8h6axMJrI9",
       "1Zx2EGMWlm_yE1cBZnVVhVN758UqNC9aL",
       "1SZ7GKxT9zvYa9l3JapmjhtvmDPbfKp7U",
-      "1kHKDB8FN3eczsXOkeUefghuiYrftb7Uj",
+      "1kHKDB8FN3eczsXOkeUefghuiYrftb7Uj"
     ];
 
     const today = new Date().toDateString();
