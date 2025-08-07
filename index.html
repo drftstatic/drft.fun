@@ -11,12 +11,15 @@
       font-family: 'Courier New', monospace;
       text-align: center;
       padding: 2rem;
+      margin: 0;
+      overflow-x: hidden;
     }
 
     h1 {
-      animation: flicker 1s infinite;
-      font-size: 1.8rem;
+      font-size: 1.6rem;
       text-shadow: 0 0 5px #00ff99;
+      animation: glitch 1.2s infinite linear;
+      white-space: pre-line;
     }
 
     iframe {
@@ -25,6 +28,8 @@
       max-width: 800px;
       height: 450px;
       border: 2px solid #00ff99;
+      z-index: 2;
+      position: relative;
     }
 
     a {
@@ -35,43 +40,77 @@
       margin-top: 2rem;
     }
 
+    p {
+      margin-top: 2rem;
+    }
+
+    /* VHS HUD Scanlines */
+    body::before {
+      content: "";
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: repeating-linear-gradient(
+        rgba(0, 255, 153, 0.05),
+        rgba(0, 255, 153, 0.05) 1px,
+        transparent 2px,
+        transparent 4px
+      );
+      pointer-events: none;
+      z-index: 5;
+      animation: flicker 0.3s infinite;
+    }
+
     @keyframes flicker {
       0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% { opacity: 1; }
-      20%, 24%, 55% { opacity: 0; }
+      20%, 24%, 55% { opacity: 0.6; }
+    }
+
+    @keyframes glitch {
+      0% { transform: translate(0); }
+      20% { transform: translate(-1px, 1px); }
+      40% { transform: translate(1px, -1px); }
+      60% { transform: translate(-1px, 1px); }
+      80% { transform: translate(1px, -1px); }
+      100% { transform: translate(0); }
     }
   </style>
 </head>
 <body>
 
-  <h1>~ signal locked ~</h1>
+  <h1>
+  ▄████████▄ ▄▄▄▄▄ ▄▄▄▄▄ ▄▄▄▄▄ 
+  ██░░░░░░██ █░░░██░░░█ █░░░██
+  ██░░█░░░██ █░░░██░░░█ █░░░██
+  ██░░░░░░██ █░░░██░░░█ █░░░██
+  ▀████████▀ ▀▀▀▀▀ ▀▀▀▀ ▀▀▀▀▀ 
+       DRFT.FUN // SIGNAL LOCKED
+  </h1>
 
   <div id="videoContainer"></div>
 
-  <div>
-    <p>~ drift deeper ~</p>
-    <a href="https://nulltone.tv" target="_blank">tune.in → nulltone.tv</a><br>
-    <a href="https://www.tiktok.com/@analogcoma" target="_blank">become.static → @analogcoma</a>
-  </div>
+  <p>~ drift deeper ~</p>
+  <a href="https://nulltone.tv" target="_blank">tune.in → nulltone.tv</a><br>
+  <a href="https://www.tiktok.com/@analogcoma" target="_blank">become.static → @analogcoma</a>
 
   <script>
     const videoIds = [
-      "17058jehGjkLMECRq5wQCa6KzBtFoR9HL",
-      "1ctzYhxuAp9D69HTfPUhtKd7wH-1vrQop",
-      "1hCG0vEomTp64lWxXJ6Ug01MeJ6N1DWIy",
-      "1AOZuX8eeEB71dasV4C7lggaRyikD_WHt",
-      "1axJPcQojfx67TXgKk3KUvuXmAr3NuFlV",
-      "1HkDajymzr_sBMH49vBF46qF2okjWPpBM",
-      "1fHph8jCc4EHfa_Vw9N-fNk8h6axMJrI9",
-      "1Zx2EGMWlm_yE1cBZnVVhVN758UqNC9aL",
-      "1SZ7GKxT9zvYa9l3JapmjhtvmDPbfKp7U",
-      "1kHKDB8FN3eczsXOkeUefghuiYrftb7Uj",
+      "1ktFSz4EAFJxH4fZSv6cztKoXCRHgU-G4",
+      "1EVGzbbZPWltvUMV33x-zg_GU2EKoBpeQ",
+      "1TVYHZBCq2rhM2-uigpVflA5cxY68dv-j",
+      "1YOQJNjCUv1vUZ7WXzvP3GiU5pcH2moyL",
+      "1uwz2dLrxdgyQjcVazuk4EkCh0sx0SvGa",
+      "1-qHgBQkGrUL2HgZzvYzjz_Pe2xyOjNiL",
+      "1w_EPVvPH8efcmGZtGLu_0Zs4G2OXEPjd",
+      "1z08MMa3GVnyYbH5CcdDwflKa1W1Znp1W",
+      "1XgHHr1yFUzvFJsmDCJXqULN88gFoBCrR",
+      "1rgMR6UtkDnkcZ3XnOPuqUQ6asls3p6Wz"
     ];
 
     const today = new Date().toDateString();
     const seed = Array.from(today).reduce((sum, char) => sum + char.charCodeAt(0), 0);
     const index = seed % videoIds.length;
     const selectedId = videoIds[index];
-
     const embedURL = `https://drive.google.com/file/d/${selectedId}/preview`;
 
     document.getElementById("videoContainer").innerHTML = `
