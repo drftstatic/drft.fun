@@ -154,6 +154,9 @@ body:not(.theme-rainbow) .v{
 .keys-line {
   text-align: center;
   font-size: clamp(10px, 3vw, 14px);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
 }
 
 .footer {
@@ -169,17 +172,26 @@ body:not(.theme-rainbow) .v{
   padding: 1px 6px;
   border: 1px solid var(--crt-accent);
   border-radius: 4px;
-  box-shadow: 0 0 6px color-mix(in srgb, var(--crt-accent) 35%, transparent) inset;
   background: #000;
   color: var(--crt-accent);
-  font-size: 0.95em; /* slightly smaller by default */
+  font-size: 0.95em;
+
+  /* Neon glow effect */
+  box-shadow:
+    0 0 4px color-mix(in srgb, var(--crt-accent) 40%, transparent) inset,
+    0 0 4px var(--crt-accent),
+    0 0 4px var(--crt-accent),
+    0 0 2px color-mix(in srgb, var(--crt-accent) 70%, transparent);
 }
 
-/* Even smaller on tiny screens */
+/* Tighter fit + more breathing room between lines on mobile */
 @media (max-width: 480px) {
   .k {
     padding: 0 4px;
     font-size: 0.85em;
+  }
+  .keys-line {
+    gap: 8px; /* extra space between the two lines */
   }
 }
 /* Theme buttons row */
@@ -306,18 +318,23 @@ html,body{ overflow-x:hidden; }
         <!-- Footer tips -->
 <div class="footer">
   <div class="keys-line">
-    <span class="k">R</span> Rainbow &nbsp;
-    <span class="k">G</span> Green &nbsp;
-    <span class="k">A</span> Amber &nbsp;
-    <span class="k">I</span> Ice &nbsp; | &nbsp;
-    <span class="k">1–6</span> Jump
+    <div>
+      <span class="k">R</span> Rainbow &nbsp;
+      <span class="k">G</span> Green &nbsp;
+      <span class="k">A</span> Amber &nbsp;
+      <span class="k">I</span> Ice
+    </div>
+    <div>
+      <span class="k">1–6</span> Jump
+    </div>
   </div>
   <p class="sysop-line">
     SYSOP: <a href="mailto:robb@fladrycreative.com" class="sysop-link">
       <span class="envelope">✉</span> robb.fladry</a> online.<br>
     Be kind, rewind.
   </p>
-</div>        <!-- Theme buttons -->
+</div>  
+     <!-- Theme buttons -->
         <div class="themebar">
           <button data-theme="rainbow" title="Rainbow">RAINBOW</button>
           <button data-theme="green"   title="Green phosphor">GREEN</button>
