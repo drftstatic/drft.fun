@@ -132,28 +132,22 @@ body:not(.theme-rainbow) .v{
 }
 
 /* Menu box */
-.menu{
-  padding:10px 14px 12px 14px;
-  margin: 10px auto 10px auto;
-  width:min(760px, 86vw);
+.menu {
+  padding: 10px 14px 12px 14px;
+  margin: 10px auto;
+  width: min(760px, 86vw);
+
+  text-align: center;
 }
-.menu .hdr{
-  display:inline-block;
-  padding:2px 6px 3px 6px;
-  margin-bottom:6px;
-  background: #001f1f;
-  color:#c7ffde;
-  border:1px solid var(--crt-accent);
-  box-shadow: 0 0 8px color-mix(in srgb, var(--crt-accent) 45%, transparent) inset;
-  font-weight:700;
-  letter-spacing:.02em;
-  font-size: clamp(12px, 1.5vw, 16px);
+
+.menu .hdr {
+  text-align: center; /* centers the header text only */
 }
-.menu pre{
-  margin:0;
-  white-space:pre;
-  font-size: clamp(12px, 1.55vw, 18px);
-  line-height:1.25;
+
+.menu pre {
+  display: inline-block;
+  text-align: left;
+  margin: 0 auto;
 }
 
 /* Footer bar inside screen */
@@ -215,7 +209,11 @@ html,body{ overflow-x:hidden; }
   /* scale type by viewport width so long lines always fit */
   .title-line{ font-size: clamp(18px, 8.5vw, 34px); }
   .menu .hdr{  font-size: clamp(11px, 3.6vw, 15px); }
-  .menu pre{   font-size: clamp(11px, 3.7vw, 15px); line-height: 1.18; }
+  .menu pre {
+  display: inline-block;
+  text-align: left;
+  margin: 0 auto;
+}
 
   /* buttons + tip */
   .footer{ font-size: clamp(10px, 3.2vw, 14px); gap: 10px; }
@@ -228,7 +226,11 @@ html,body{ overflow-x:hidden; }
 /* Ultra-small (older iPhones in landscape, etc.) */
 @media (max-width: 360px){
   .title-line{ font-size: clamp(16px, 7.8vw, 30px); }
-  .menu pre{   font-size: clamp(10px, 3.4vw, 14px); }
+  .menu pre {
+  display: inline-block;
+  text-align: left;
+  margin: 0 auto;
+}
   .menu .hdr{  font-size: clamp(10px, 3.2vw, 14px); }
 }
 .sysop-line {
@@ -288,7 +290,7 @@ html,body{ overflow-x:hidden; }
           <div>Tip: Press <span class="k">R</span> Rainbow, <span class="k">G</span> Green, <span class="k">A</span> Amber, <span class="k">I</span> Ice. Press <span class="k">1–6</span> to jump.</div>
 <p class="sysop-line">
   SYSOP: <a href="mailto:robb@fladrycreative.com" class="sysop-link">
-    <span class="envelope">✉</span>robb.fladry</a>.<br>
+    <span class="envelope">✉</span> robb.fladry</a> online.<br>
   Be kind, rewind.
 </p>
         </div>
