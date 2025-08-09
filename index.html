@@ -1,119 +1,285 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>DRFT.FUN BBS Terminal</title>
-  <style>
-    /* Reset some defaults for consistency */
-    body { margin: 0; background: #000; color: #ccc; font-family: monospace; }
-    a { color: inherit; text-decoration: none; }  a:hover { text-decoration: underline; }
-    /* Terminal frame styling */
-    #terminal {
-      position: relative;
-      max-width: 800px;
-      max-height: 100vh;
-      width: 100%;
-      margin: 0 auto;
-      padding: 0.5em 1em;
-      box-sizing: border-box;
-      background: #000;
-      /* CRT scanline overlay using repeating-linear-gradient */
-      background-image: repeating-linear-gradient(
-        to bottom,
-        rgba(255,255,255,0.05) 0px,
-        rgba(255,255,255,0.05) 1px,
-        transparent 1px,
-        transparent 3px
-      );
-      /* The gradient creates 1px horizontal lines with 2px gaps */
-      overflow-y: auto; /* enable vertical scrolling inside frame if needed */
-      border: 2px solid #333;
-      border-radius: 5px;
-    }
-    /* Title ANSI art styling */
-    #title { text-align: center; margin-bottom: 0.5em; }
-    #title pre { margin: 0; } /* ensure no extra spacing around ANSI art */
-    /* Define rainbow ANSI colors for each letter (used in Rainbow theme) */
-    .ansi-red    { color: #FF0000; }
-    .ansi-orange { color: #FF8000; }
-    .ansi-yellow { color: #FFFF00; }
-    .ansi-green  { color: #00FF00; }
-    .ansi-cyan   { color: #00FFFF; }
-    .ansi-blue   { color: #0000FF; }
-    .ansi-indigo { color: #8000FF; }
-    .ansi-violet { color: #FF00FF; }
-    /* Theme-specific overrides */
-    body.green-theme  { background: #000; }  /* body bg stays black for all themes */
-    body.amber-theme  { background: #000; }
-    body.ice-theme    { background: #000; }
-    body.rainbow-theme{ background: #000; }
-    body.green-theme  #terminal { color: #0f0; }
-    body.amber-theme  #terminal { color: #ffb000; }
-    body.ice-theme    #terminal { color: #aff; }
-    body.rainbow-theme #terminal { color: #ccc; }
-    /* Override all ANSI span colors to monochrome in non-rainbow themes */
-    body.green-theme  .ansi-red, body.green-theme .ansi-orange, body.green-theme .ansi-yellow,
-    body.green-theme  .ansi-green, body.green-theme .ansi-cyan, body.green-theme .ansi-blue,
-    body.green-theme  .ansi-indigo, body.green-theme .ansi-violet { color: #0f0 !important; }
-    body.amber-theme  .ansi-red, body.amber-theme .ansi-orange, body.amber-theme .ansi-yellow,
-    body.amber-theme  .ansi-green, body.amber-theme .ansi-cyan, body.amber-theme .ansi-blue,
-    body.amber-theme  .ansi-indigo, body.amber-theme .ansi-violet { color: #ffb000 !important; }
-    body.ice-theme    .ansi-red, body.ice-theme .ansi-orange, body.ice-theme .ansi-yellow,
-    body.ice-theme    .ansi-green, body.ice-theme .ansi-cyan, body.ice-theme .ansi-blue,
-    body.ice-theme    .ansi-indigo, body.ice-theme .ansi-violet { color: #aff !important; }
-    /* (Rainbow theme uses the base .ansi- colors, so no override needed) */
-    /* Menu styling (monospaced lines) */
-    #menu p { margin: 0.2em 0; }
-  </style>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>DRFT // FUN // BBS</title>
+
+<style>
+/* ===== Base / Variables ===== */
+:root{
+  --bg:#000;
+  --crt-green:#36ff6b;
+  --crt-amber:#ffcc55;
+  --crt-ice:#a7e6ff;
+  --crt-accent:#00ffee;
+
+  --frame-max: 820px;          /* tight shell on laptops */
+  --frame-pad: 22px;           /* bezel padding */
+  --box-border: 2px;
+  --scanline-alpha: .085;
+}
+
+/* Themes */
+body{ background:var(--bg); color:var(--crt-green); margin:0; }
+body.theme-amber{ color:var(--crt-amber); }
+body.theme-ice{ color:var(--crt-ice); }
+body.theme-rainbow{ color:#d8ffe6; } /* neutral text when rainbow title active */
+
+/* ===== CRT Shell ===== */
+.wrap{
+  min-height:100dvh;
+  display:grid;
+  place-items:center;
+}
+.crt{
+  position:relative;
+  width:min(92vmin, var(--frame-max));
+  background:#000;
+  border-radius:18px;
+  box-shadow:
+    0 0 0 2px #0b0b0b inset,
+    0 20px 90px rgba(0,0,0,.85),
+    0 0 60px rgba(0,0,0,.8);
+  padding:var(--frame-pad);
+}
+
+/* Curvature / vignette */
+.crt::before{
+  content:"";
+  position:absolute; inset:0;
+  border-radius:18px;
+  background:
+    radial-gradient(115% 90% at 50% 14%, transparent 40%, rgba(0,0,0,.22) 70%, rgba(0,0,0,.60) 100%);
+  mix-blend-mode:multiply;
+  pointer-events:none;
+}
+
+/* Scanlines */
+.crt::after{
+  content:"";
+  position:absolute; inset:0;
+  border-radius:18px;
+  background:
+    repeating-linear-gradient(
+      to bottom,
+      rgba(255,255,255,0) 0px,
+      rgba(255,255,255,0) 2px,
+      rgba(255,255,255,var(--scanline-alpha)) 3px,
+      rgba(255,255,255,0) 4px
+    );
+  opacity:.65;
+  pointer-events:none;
+}
+
+/* ===== Screen Grid ===== */
+.screen{
+  position:relative;
+  isolation:isolate;
+  font-family: ui-monospace, Menlo, Monaco, Consolas, "Courier New", monospace;
+  text-shadow:
+    0 0 2px currentColor,
+    0 0 8px color-mix(in srgb, currentColor 55%, transparent);
+  filter: saturate(1.1) contrast(1.04);
+}
+
+/* Boxes */
+.frame{
+  position:relative;
+  border:var(--box-border) solid var(--crt-accent);
+  border-radius:6px;
+  box-shadow: 0 0 14px color-mix(in srgb, var(--crt-accent) 35%, transparent) inset;
+  background: #000;
+}
+
+/* Title box */
+.title{
+  padding:14px 16px;
+  margin: 4px auto 16px auto;
+  width:min(760px, 86vw);
+}
+.title-line{
+  display:flex; gap:.08em; justify-content:center; align-items:center;
+  letter-spacing:.02em;
+  /* Responsive size: small phones -> laptops */
+  font-size: clamp(20px, 4.2vw, 54px);
+  line-height: 1;
+}
+
+/* Rainbow letters for title */
+.r{color:#ff5b5b}.o{color:#ffa244}.y{color:#ffe35b}.g{color:#65ff7a}
+.c{color:#6af2ff}.b{color:#6b7bff}.i{color:#be6bff}.v{color:#ff6bda}
+
+body:not(.theme-rainbow) .r,
+body:not(.theme-rainbow) .o,
+body:not(.theme-rainbow) .y,
+body:not(.theme-rainbow) .g,
+body:not(.theme-rainbow) .c,
+body:not(.theme-rainbow) .b,
+body:not(.theme-rainbow) .i,
+body:not(.theme-rainbow) .v{
+  color: currentColor;
+}
+
+/* Thin neon rails above/below title like your screenshot */
+.rails{
+  margin:8px auto 0 auto;
+  width: 92%;
+  height: 4px;
+  background:
+    linear-gradient(90deg, transparent 0 4%, var(--crt-accent) 4% 96%, transparent 96% 100%);
+  box-shadow: 0 0 12px color-mix(in srgb, var(--crt-accent) 50%, transparent);
+}
+
+/* Menu box */
+.menu{
+  padding:10px 14px 12px 14px;
+  margin: 10px auto 10px auto;
+  width:min(760px, 86vw);
+}
+.menu .hdr{
+  display:inline-block;
+  padding:2px 6px 3px 6px;
+  margin-bottom:6px;
+  background: #001f1f;
+  color:#c7ffde;
+  border:1px solid var(--crt-accent);
+  box-shadow: 0 0 8px color-mix(in srgb, var(--crt-accent) 45%, transparent) inset;
+  font-weight:700;
+  letter-spacing:.02em;
+  font-size: clamp(12px, 1.5vw, 16px);
+}
+.menu pre{
+  margin:0;
+  white-space:pre;
+  font-size: clamp(12px, 1.55vw, 18px);
+  line-height:1.25;
+}
+
+/* Footer bar inside screen */
+.footer{
+  display:flex; gap:14px; flex-wrap:wrap; align-items:center;
+  justify-content:center;
+  margin: 12px auto 0;
+  width:min(760px, 86vw);
+  font-size: clamp(11px, 1.3vw, 15px);
+}
+.k{
+  padding:1px 6px; border:1px solid var(--crt-accent); border-radius:4px;
+  box-shadow: 0 0 6px color-mix(in srgb, var(--crt-accent) 35%, transparent) inset;
+  background:#000; color:var(--crt-accent);
+}
+
+/* Theme buttons row */
+.themebar{
+  display:flex; gap:8px; justify-content:center;
+  margin: 8px auto 0;
+  width:min(760px, 86vw);
+}
+.themebar button{
+  font: inherit; cursor:pointer; border-radius:6px;
+  background:#000; color:var(--crt-accent);
+  border:1px solid var(--crt-accent); padding:4px 10px;
+  box-shadow: 0 0 8px color-mix(in srgb, var(--crt-accent) 40%, transparent) inset;
+}
+.themebar button:hover{ filter:brightness(1.2); }
+.themebar button:active{ transform:translateY(1px); }
+
+/* Links look terminal-native */
+a{ color:inherit; text-decoration:none; }
+a:hover{ filter:brightness(1.25); }
+
+/* Tiny VHS wiggle on content only (not the bezel) */
+@keyframes vhs { 0%,100%{ transform:translateX(0) } 50%{ transform:translateX(.35px) } }
+.wiggle{ animation:vhs 1.9s linear infinite; }
+
+/* Make sure nothing ever spills horizontally */
+*{ box-sizing:border-box; }
+html,body{ overflow-x:hidden; }
+</style>
 </head>
-<body class="rainbow-theme">  <!-- default theme: Rainbow -->
-  <div id="terminal">
-    <div id="title">
-      <!-- Rainbow ANSI title text (each letter a different color) -->
-      <pre>
-<span class="ansi-red">D</span><span class="ansi-orange">R</span><span class="ansi-yellow">F</span><span class="ansi-green">T</span><span class="ansi-cyan">.</span><span class="ansi-blue">F</span><span class="ansi-indigo">U</span><span class="ansi-violet">N</span>
-      </pre>
-    </div>
-    <div id="menu">
-      <!-- Reordered menu items with new descriptions -->
-      <p>1. <a href="https://vcrprophet.substack.com" target="_blank">VCR PROPHET</a> &mdash; behind-the-scenes blog and project logs</p>
-      <p>2. <a href="https://medium.com/@robb.fladry" target="_blank">@ROBBISSTATIC</a> &mdash; pop culture reflections, conceptual writing</p>
-      <p>3. <a href="#" onclick="return false;">VHS STEP DAD</a> &mdash; analog dreams, shortform glitches</p>
-      <p>4. <a href="https://nulltone.tv" target="_blank">NULLTONE.TV</a> &mdash; alt-streaming experiments, lostform</p>
-      <p>5. <a href="#" onclick="return false;">DCPN</a> &mdash; Deathstep Communications Podcast Network</p>
-      <p>6. <a href="#" onclick="return false;">FLADRY CREATIVE</a> &mdash; studio HQ, client work, contact</p>
+<body class="theme-rainbow">
+  <div class="wrap">
+    <div class="crt">
+      <div class="screen wiggle">
+
+        <!-- Title Box -->
+        <div class="frame title">
+          <div class="rails"></div>
+          <div class="title-line" aria-label="DRFT dot FUN">
+            <span class="r">D</span><span class="o">R</span><span class="y">F</span><span class="g">T</span><span class="c">.</span><span class="b">F</span><span class="i">U</span><span class="v">N</span>
+          </div>
+          <div class="rails"></div>
+        </div>
+
+        <!-- Menu Box -->
+        <div class="frame menu">
+          <div class="hdr">WELCOME TO THE DRIFT // A PUBLIC ACCESS NODE OF FLADRY CREATIVE</div>
+<pre>
+<span style="color:#55ffff"> 1</span> <a id="link1" href="https://vcrprophet.substack.com" target="_blank">VCR PROPHET</a>     — behind-the-scenes blog and project logs
+<span style="color:#55ffff"> 2</span> <a id="link2" href="https://medium.com/@robbisstatic" target="_blank">@ROBBISSTATIC</a>   — pop culture reflections, conceptual writing
+<span style="color:#55ffff"> 3</span> <a id="link3" href="https://vhsstepdad.com" target="_blank">VHS STEP DAD</a>    — analog dreams, shortform glitches
+<span style="color:#55ffff"> 4</span> <a id="link4" href="https://nulltone.tv" target="_blank">NULLTONE.TV</a>     — alt-streaming experiments, lostform
+<span style="color:#55ffff"> 5</span> <a id="link5" href="https://dthstp.com" target="_blank">DCPN</a>            — podcast, live programming
+<span style="color:#55ffff"> 6</span> <a id="link6" href="https://fladrycreative.com" target="_blank">FLADRY CREATIVE</a> — studio HQ, client work, contact
+</pre>
+        </div>
+
+        <!-- Footer tips -->
+        <div class="footer">
+          <div>Tip: Press <span class="k">R</span> Rainbow, <span class="k">G</span> Green, <span class="k">A</span> Amber, <span class="k">I</span> Ice. Press <span class="k">1–6</span> to jump.</div>
+          <div>SYSOP: ECHOMOX online. Be kind, rewind.</div>
+        </div>
+
+        <!-- Theme buttons -->
+        <div class="themebar">
+          <button data-theme="rainbow" title="Rainbow">RAINBOW</button>
+          <button data-theme="green"   title="Green phosphor">GREEN</button>
+          <button data-theme="amber"   title="Amber mono">AMBER</button>
+          <button data-theme="ice"     title="Ice blue">ICE</button>
+        </div>
+
+      </div>
     </div>
   </div>
-  <script>
-    // BBS hotkeys for menu navigation (1–6)
-    document.addEventListener('keydown', function(e) {
-      switch(e.key) {
-        case '1': window.open('https://vcrprophet.substack.com', '_blank'); break;
-        case '2': window.open('https://medium.com/@robb.fladry', '_blank'); break;
-        case '3': /* no link available yet */ break;
-        case '4': window.open('https://nulltone.tv', '_blank'); break;
-        case '5': /* no link available yet */ break;
-        case '6': /* no link available yet */ break;
-        // Press "T" to cycle through color themes
-        case 't':
-        case 'T':
-          cycleTheme();
-          break;
-      }
-    });
-    function cycleTheme() {
-      const themes = ['rainbow-theme','green-theme','amber-theme','ice-theme'];
-      const body = document.body;
-      // find current theme index
-      let currentIndex = themes.findIndex(t => body.classList.contains(t));
-      if(currentIndex < 0) currentIndex = 0;
-      // remove current theme class
-      body.classList.remove(themes[currentIndex]);
-      // add next theme class (wrap around end of list)
-      const nextIndex = (currentIndex + 1) % themes.length;
-      body.classList.add(themes[nextIndex]);
-    }
-  </script>
+
+<script>
+/* ===== Theme switching (buttons + keys G/A/I/R) ===== */
+const setTheme = t=>{
+  document.body.classList.remove('theme-green','theme-amber','theme-ice','theme-rainbow');
+  document.body.classList.add('theme-'+t);
+};
+document.querySelectorAll('[data-theme]').forEach(b=>{
+  b.addEventListener('click', ()=> setTheme(b.dataset.theme));
+});
+addEventListener('keydown', e=>{
+  const k = e.key.toLowerCase();
+  if(k==='g') setTheme('green');
+  if(k==='a') setTheme('amber');
+  if(k==='i') setTheme('ice');
+  if(k==='r') setTheme('rainbow');
+});
+
+/* ===== BBS number hotkeys 1–6 ===== */
+const links = [
+  null,
+  document.getElementById('link1'),
+  document.getElementById('link2'),
+  document.getElementById('link3'),
+  document.getElementById('link4'),
+  document.getElementById('link5'),
+  document.getElementById('link6')
+];
+addEventListener('keydown', e=>{
+  if(/^[1-6]$/.test(e.key)){
+    e.preventDefault();
+    const a = links[Number(e.key)];
+    if(a) a.click();
+  }
+});
+
+/* ===== Resize polish: keep boxes neat on tiny screens ===== */
+/* No horizontal spill thanks to clamp() font sizes. Nothing else needed. */
+</script>
 </body>
 </html>
