@@ -19,13 +19,12 @@
     --ansi-8:#555555; --ansi-9:#ff5555; --ansi-10:#55ff55; --ansi-11:#ffff55;
     --ansi-12:#5555ff; --ansi-13:#ff55ff; --ansi-14:#55ffff; --ansi-15:#ffffff;
 
-    --crt-width: 960px;
-    --crt-max: 92vmin;
-    --cell-w: 12px;  /* ~80 cols */
-    --cell-h: 20px;  /* ~25 rows */
+    --crt-width: 1024px;     /* base max width */
+    --crt-max: 92vmin;       /* responsive upper bound */
+    --cell-w: 12px;          /* ~80 cols at base width */
+    --cell-h: 20px;          /* ~25 rows */
   }
 
-  /* Theme modifiers */
   .theme-amber{ --phosphor:#ffdd55; --phosphor-soft:#ffc233; --accent:#ff8a00; }
   .theme-ice  { --phosphor:#8ee7ff; --phosphor-soft:#6ec9ff; --accent:#87b6ff; }
   .theme-rainbow{ --phosphor:#ffffff; --phosphor-soft:#dddddd; --accent:#ff79c6; }
@@ -41,6 +40,7 @@
   .crt{
     position:relative;
     width:min(var(--crt-width),var(--crt-max));
+    height:min(calc(var(--crt-max) * 0.75), 82vh); /* keep the whole unit visible */
     aspect-ratio:4/3;
     background:radial-gradient(120% 90% at 50% 10%, #0a0a0a 0%, #000 60%), #000;
     border-radius:18px;
@@ -65,13 +65,22 @@
     position:absolute; inset:18px;
     background:#000;
     border-radius:8px;
-    box-shadow: 0 0 32px rgba(0,255,80,.05) inset;
+    box-shadow:0 0 32px rgba(0,255,80,.05) inset;
     overflow:hidden;
   }
 
-  /* 80x25 grid */
+  /* Fit layer scales the entire terminal grid to available space */
+  .fit{
+    position:absolute;
+    left:14px; right:14px; top:14px; bottom:58px; /* leave room for bottom bar */
+    transform-origin: top left;
+  }
+
+  /* 80x25 grid container (not scaled directly anymore) */
   .rows{
-    position:absolute; inset:14px;
+    position:relative;
+    width: calc(80 * var(--cell-w));
+    height: calc(25 * var(--cell-h));
     display:grid;
     grid-template-columns: repeat(80, var(--cell-w));
     grid-template-rows: repeat(25, var(--cell-h));
@@ -80,6 +89,14 @@
     text-shadow:0 0 2px var(--phosphor-soft), 0 0 6px color-mix(in srgb, var(--phosphor) 50%, transparent);
     filter:saturate(1.15) contrast(1.05);
   }
+
+  /* Light VHS wiggle on an inner wrapper so scaling survives */
+  .rows-inner{ width:100%; height:100%; }
+  @keyframes vhs {
+    0%,100% { transform: translateX(0); }
+    50% { transform: translateX(.3px); }
+  }
+  .rows-inner{ animation:vhs 1.8s infinite linear; }
 
   .cursor{ animation: blink 1s steps(1,end) infinite; }
   @keyframes blink { 50% { opacity:0; } }
@@ -115,6 +132,7 @@
     opacity:.7;
   }
 
+  /* Bottom bar stays visible */
   .bar{
     position:absolute; left:18px; right:18px; bottom:10px;
     display:flex; justify-content:space-between; align-items:center;
@@ -123,20 +141,17 @@
   }
   .btns{ display:flex; gap:10px; }
   button{
-    font: inherit; color:var(--accent); background:#000; border:1px solid var(--accent);
+    font:inherit; color:var(--accent); background:#000; border:1px solid var(--accent);
     padding:2px 8px; border-radius:3px; cursor:pointer;
     box-shadow:0 0 8px color-mix(in srgb, var(--accent) 40%, transparent) inset;
   }
   button:hover{ filter:brightness(1.2); }
   button:active{ transform:translateY(1px); }
 
-  @keyframes vhs { 0%,100% { transform: translateX(0); } 50% { transform: translateX(.3px); } }
-  .rows{ animation:vhs 1.8s infinite linear; }
-
+  /* Mobile nudge */
   @media (max-width: 700px){
     :root{ --cell-w: 9px; --cell-h: 16px; }
     .bar{ bottom:4px; font-size:14px; }
-    #ansiTitle{ font-size:18px; }
   }
 
   a { text-decoration:none; }
@@ -147,9 +162,13 @@
 <body class="theme-green">
   <div class="crt">
     <div class="screen">
-      <div class="rows" id="rows">
-        <!-- Title box -->
-        <div class="box" style="grid-column: 2 / span 78; grid-row: 3 / span 8;">
+      <!-- Fit-to-space scaler -->
+      <div class="fit" id="fit">
+        <!-- Terminal grid -->
+        <div class="rows" id="rows">
+          <div class="rows-inner">
+            <!-- Title box -->
+            <div class="box" style="grid-column: 2 / span 78; grid-row: 3 / span 8;">
 <pre id="ansiTitle" style="margin:0; font-size:22px; line-height:1.05;">
 __________________ _____  __             
 |  _  \ ___ \  ___|_   _|/ _|            
@@ -170,10 +189,10 @@ __________________ _____  __
   <div class="sw" style="background:var(--ansi-13)"></div>
   <div class="sw" style="background:var(--ansi-15)"></div>
 </div>
-        </div>
+            </div>
 
-        <!-- Menu box -->
-        <div class="box" style="grid-column: 2 / span 78; grid-row: 12 / span 10;">
+            <!-- Menu box -->
+            <div class="box" style="grid-column: 2 / span 78; grid-row: 12 / span 10;">
 <pre style="margin:0; font-size:18px;">
 <span class="fg12">╔══════════════════════════════════════════════════════════════════════════════╗</span>
 <span class="fg12">║</span> <span class="gradient" style="font-weight:700;">WELCOME TO THE DRIFT // PUBLIC ACCESS NODE</span>                            <span class="fg12">║</span>
@@ -189,12 +208,14 @@ __________________ _____  __
 <span class="fg7">Tip:</span> Press <span class="fg11">[R]</span> for Rainbow, <span class="fg11">[G]</span> Green, <span class="fg11">[A]</span> Amber, <span class="fg11">[I]</span> Ice. Press <span class="fg11">[1–6]</span> to jump.
 <span class="fg7">SYSOP:</span> ECHOMOX online. Be kind, rewind. <span class="cursor">▮</span>
 </pre>
-        </div>
-      </div>
+            </div>
+          </div> <!-- /rows-inner -->
+        </div>   <!-- /rows -->
+      </div>     <!-- /fit -->
 
       <!-- Bottom bar -->
       <div class="bar">
-        <div>DRFT.FUN // BBS STYLE SKIN v1.2</div>
+        <div>DRFT.FUN // BBS STYLE SKIN v1.3</div>
         <div class="btns">
           <button data-theme="green" title="Green phosphor">GREEN</button>
           <button data-theme="amber" title="Amber monochrome">AMBER</button>
@@ -223,7 +244,7 @@ __________________ _____  __
     if (k === 'r') setTheme('rainbow');
   });
 
-  /* Per-character rainbow gradient for the ASCII art title */
+  /* Per-character rainbow gradient for the ASCII title */
   (function rainbowize(){
     const el = document.getElementById('ansiTitle');
     const lines = el.textContent.replace(/\r/g,'').split('\n');
@@ -295,6 +316,47 @@ __________________ _____  __
         }
       }
     });
+  })();
+
+  /* Auto scale the terminal grid to fit the .fit box */
+  (function autoscale(){
+    const fit = document.getElementById('fit');
+    const rows = document.getElementById('rows');
+
+    function resize(){
+      // available space inside .fit
+      const availW = fit.clientWidth;
+      const availH = fit.clientHeight;
+
+      // natural content size
+      const contentW = rows.scrollWidth;
+      const contentH = rows.scrollHeight;
+
+      const scale = Math.min(availW / contentW, availH / contentH, 1);
+
+      rows.style.transform = `scale(${scale})`;
+      rows.style.transformOrigin = 'top left';
+
+      // center horizontally/vertically if there is extra space
+      const usedW = contentW * scale;
+      const usedH = contentH * scale;
+      const offsetX = Math.max(0, (availW - usedW) / 2);
+      const offsetY = Math.max(0, (availH - usedH) / 2);
+      rows.style.position = 'absolute';
+      rows.style.left = `${offsetX}px`;
+      rows.style.top  = `${offsetY}px`;
+      rows.style.right = 'auto';
+      rows.style.bottom = 'auto';
+    }
+
+    addEventListener('resize', resize);
+    const ro = new ResizeObserver(resize);
+    ro.observe(fit);
+    ro.observe(rows);
+
+    // theme changes or font loads can shift metrics
+    document.fonts && document.fonts.ready.then(resize);
+    setTimeout(resize, 50);
   })();
 </script>
 </body>
