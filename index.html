@@ -304,6 +304,107 @@ html,body{ overflow-x:hidden; }
 .sysop-link:hover .social {
   text-shadow: 0 0 8px #ffffff, 0 0 15px #00ffcc;
 }
+/* === CRT Overlay Effects === */
+.crt::before {
+  content: "";
+  position: absolute; inset: 0;
+  border-radius: 18px;
+  background: radial-gradient(115% 90% at 50% 14%, transparent 40%, rgba(0,0,0,0.22) 70%, rgba(0,0,0,0.60) 100%);
+  mix-blend-mode: multiply;
+  pointer-events: none;
+}
+.crt::after {
+  content: "";
+  position: absolute; inset: 0;
+  border-radius: 18px;
+  background: repeating-linear-gradient(
+    to bottom,
+    rgba(255,255,255,0) 0 2px,
+    rgba(255,255,255,0.08) 3px,
+    rgba(255,255,255,0) 4px
+  );
+  opacity: 0.65;
+  pointer-events: none;
+}
+/* Screen flicker overlay */
+@keyframes flicker {
+  0% { opacity: 0.28; }  5% { opacity: 0.35; }
+  10%{ opacity: 0.24; } 15%{ opacity: 0.90; }
+  20%{ opacity: 0.18; } 25%{ opacity: 0.84; }
+  30%{ opacity: 0.66; } 35%{ opacity: 0.68; }
+  40%{ opacity: 0.27; } 45%{ opacity: 0.85; }
+  50%{ opacity: 0.96; } 55%{ opacity: 0.09; }
+  60%{ opacity: 0.20; } 65%{ opacity: 0.72; }
+  70%{ opacity: 0.53; } 75%{ opacity: 0.37; }
+  80%{ opacity: 0.71; } 85%{ opacity: 0.70; }
+  90%{ opacity: 0.70; } 95%{ opacity: 0.36; }
+  100%{ opacity: 0.24; }
+}
+.screen::after {
+  content: "";
+  position: absolute; inset: 0;
+  background: rgba(18,16,16,0.1);
+  opacity: 0;
+  pointer-events: none;
+  animation: flicker 0.15s infinite;
+}
+
+/* === Neon Glow Text === */
+@keyframes neonFlicker {
+  0%,19%,21%,23%,25%,54%,56%,100% { opacity: 0.99; }
+  20%,24%,55% { opacity: 0.4; }
+}
+.title-line {
+  text-shadow: 0 0 8px #fff, 0 0 12px currentColor;
+  animation: neonFlicker 3s infinite alternate;
+}
+.menu .hdr {
+  text-shadow: 0 0 5px currentColor, 0 0 10px currentColor;
+}
+.sysop-line {
+  text-shadow: 0 0 5px currentColor, 0 0 10px currentColor;
+}
+/* The .k class already has neon styling in base CSS; add a gentle pulse: */
+@keyframes pulseGlow { 
+  0%,100% { box-shadow: 0 0 4px var(--crt-accent) inset, 0 0 4px var(--crt-accent); }
+  50% { box-shadow: 0 0 6px var(--crt-accent), 0 0 6px var(--crt-accent); }
+}
+.k {
+  animation: pulseGlow 4s infinite alternate;
+}
+
+/* === Icon & Button Animations === */
+@keyframes pulseIcon {
+  0%,100% { text-shadow: 0 0 5px currentColor, 0 0 10px currentColor; }
+  50% { text-shadow: 0 0 5px #fff, 0 0 15px currentColor; }
+}
+.envelope, .phone, .social {
+  /* inherits color #00ffcc from .sysop-link in your theme, currentColor reflects that */
+  animation: pulseIcon 2.5s infinite alternate;
+}
+
+@keyframes pulseButton {
+  0%,100% { box-shadow: 0 0 6px color-mix(in srgb, var(--crt-accent) 40%, transparent); }
+  50% { box-shadow: 0 0 12px color-mix(in srgb, var(--crt-accent) 90%, transparent); }
+}
+.themebar button {
+  /* base styles: background: #000; border:1px solid var(--crt-accent); color: var(--crt-accent); */
+  box-shadow: 0 0 6px color-mix(in srgb, var(--crt-accent) 50%, transparent);
+  animation: pulseButton 3s infinite alternate;
+}
+.themebar button:hover {
+  /* Optional: stacking a hover effect if desired */
+  filter: brightness(1.1);
+}
+
+@keyframes pulseFrame {
+  0%,100% { box-shadow: 0 0 14px color-mix(in srgb, var(--crt-accent) 35%, transparent) inset; }
+  50% { box-shadow: 0 0 14px color-mix(in srgb, var(--crt-accent) 80%, transparent) inset; }
+}
+.frame {
+  /* base .frame has border and initial box-shadow inset defined */
+  animation: pulseFrame 4s infinite alternate;
+}
 </style>
 </head>
 <body class="theme-rainbow">
