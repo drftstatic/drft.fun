@@ -282,9 +282,27 @@ html,body{ overflow-x:hidden; }
   text-shadow: 0 0 8px #ffffff, 0 0 15px #00ffcc;
 }
 
-.envelope {
-  margin-right: 4px;
+.rewind-link {
+  color: #ffffff;
+  text-shadow: 0 0 5px #ffffff, 0 0 10px #ffffff;
+  text-decoration: none;
+}
+
+.rewind-link:hover {
+  text-decoration: underline;
+}
+
+.envelope, .phone, .social {
+  margin: 0 6px;
   font-size: 14px;
+  color: #00ffcc;
+  text-shadow: 0 0 5px #00ffcc, 0 0 10px #00ffcc;
+}
+
+.sysop-link:hover .envelope,
+.sysop-link:hover .phone,
+.sysop-link:hover .social {
+  text-shadow: 0 0 8px #ffffff, 0 0 15px #00ffcc;
 }
 </style>
 </head>
@@ -328,12 +346,16 @@ html,body{ overflow-x:hidden; }
       <span class="k">1–6</span> Jump
     </div>
   </div>
+
   <p class="sysop-line">
-    SYSOP: <a href="mailto:robb@fladrycreative.com" class="sysop-link">
-       robb.fladry</a> | <span class="envelope">✉</span><br>
-    Be kind, rewind.
+    SYSOP: <a href="https://robbfladry.com" class="sysop-link">robb.fladry</a><br>
+    CONTACT:
+    <a href="mailto:robb@fladrycreative.com" class="sysop-link"><span class="envelope">✉</span></a>
+    <a href="tel:+18635551234" class="sysop-link"><span class="phone">☎</span></a>
+    <a href="https://fladrycreative.com" class="sysop-link"><span class="social">♾</span></a><br>
+    <a href="https://www.youtube.com/@robbontape" class="rewind-link">Be kind, rewind.</a>
   </p>
-</div>  
+</div>
      <!-- Theme buttons -->
         <div class="themebar">
           <button data-theme="rainbow" title="Rainbow">RAINBOW</button>
