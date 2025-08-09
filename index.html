@@ -231,6 +231,29 @@ html,body{ overflow-x:hidden; }
   .menu pre{   font-size: clamp(10px, 3.4vw, 14px); }
   .menu .hdr{  font-size: clamp(10px, 3.2vw, 14px); }
 }
+.sysop-line {
+  font-family: 'Courier New', monospace;
+  font-size: 14px;
+  color: #00ffcc; /* neon teal, match site */
+  text-shadow: 0 0 5px #00ffcc, 0 0 10px #00ffcc;
+  margin-top: 10px;
+  text-align: center; /* centers the lines */
+}
+
+.sysop-link {
+  color: #00ffcc;
+  text-decoration: none;
+}
+
+.sysop-link:hover {
+  text-decoration: underline;
+  text-shadow: 0 0 8px #ffffff, 0 0 15px #00ffcc;
+}
+
+.envelope {
+  margin-right: 4px;
+  font-size: 14px;
+}
 </style>
 </head>
 <body class="theme-rainbow">
@@ -263,8 +286,12 @@ html,body{ overflow-x:hidden; }
         <!-- Footer tips -->
         <div class="footer">
           <div>Tip: Press <span class="k">R</span> Rainbow, <span class="k">G</span> Green, <span class="k">A</span> Amber, <span class="k">I</span> Ice. Press <span class="k">1–6</span> to jump.</div>
-          <div>SYSOP: robb.fladry online.</div>
-          <div>Be kind, rewind.</div>
+<p class="sysop-line">
+  SYSOP: <a href="mailto:robb@fladrycreative.com" class="sysop-link">
+    <span class="envelope">✉</span> robb.fladry
+  </a> online.<br>
+  Be kind, rewind.
+</p>
         </div>
 
         <!-- Theme buttons -->
