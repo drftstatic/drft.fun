@@ -151,8 +151,18 @@ body:not(.theme-rainbow) .v{
 }
 
 /* Footer bar inside screen */
-.footer{
-  display:flex; gap:14px; flex-wrap:wrap; align-items:center;
+.keys-line {
+  text-align: center;
+  font-size: clamp(10px, 3.2vw, 14px);
+}
+.footer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  margin: 12px auto 0;
+  width: min(760px, 86vw);
+}  display:flex; gap:14px; flex-wrap:wrap; align-items:center;
   justify-content:center;
   margin: 12px auto 0;
   width:min(760px, 86vw);
@@ -286,14 +296,20 @@ html,body{ overflow-x:hidden; }
         </div>
 
         <!-- Footer tips -->
-        <div class="footer">
-          <div>Tip: Press <span class="k">R</span> Rainbow, <span class="k">G</span> Green, <span class="k">A</span> Amber, <span class="k">I</span> Ice. Press <span class="k">1–6</span> to jump.</div>
-<p class="sysop-line">
-  SYSOP: <a href="mailto:robb@fladrycreative.com" class="sysop-link">
-    <span class="envelope">✉</span> robb.fladry</a> online.<br>
-  Be kind, rewind.
-</p>
-        </div>
+<div class="footer">
+  <div class="keys-line">
+    <span class="k">R</span> Rainbow &nbsp;
+    <span class="k">G</span> Green &nbsp;
+    <span class="k">A</span> Amber &nbsp;
+    <span class="k">I</span> Ice &nbsp; | &nbsp;
+    <span class="k">1–6</span> Jump
+  </div>
+  <p class="sysop-line">
+    SYSOP: <a href="mailto:robb@fladrycreative.com" class="sysop-link">
+      <span class="envelope">✉</span> robb.fladry</a> online.<br>
+    Be kind, rewind.
+  </p>
+</div>
 
         <!-- Theme buttons -->
         <div class="themebar">
