@@ -12,46 +12,72 @@
     --phosphor-soft:#2adf2a;
     --accent:#00ffee;
     --scanline-alpha:0.08;
+
+    /* ANSI 16 palette */
     --ansi-0:#000000; --ansi-1:#aa0000; --ansi-2:#00aa00; --ansi-3:#aa5500;
     --ansi-4:#0000aa; --ansi-5:#aa00aa; --ansi-6:#00aaaa; --ansi-7:#aaaaaa;
     --ansi-8:#555555; --ansi-9:#ff5555; --ansi-10:#55ff55; --ansi-11:#ffff55;
     --ansi-12:#5555ff; --ansi-13:#ff55ff; --ansi-14:#55ffff; --ansi-15:#ffffff;
+
     --crt-width: 960px;
     --crt-max: 92vmin;
-    --cell-w: 12px;
-    --cell-h: 20px;
+    --cell-w: 12px;  /* ~80 cols at ~960px */
+    --cell-h: 20px;  /* ~25 rows */
   }
+
+  /* Theme modifiers */
   .theme-amber{ --phosphor:#ffdd55; --phosphor-soft:#ffc233; --accent:#ff8a00; }
   .theme-ice  { --phosphor:#8ee7ff; --phosphor-soft:#6ec9ff; --accent:#87b6ff; }
   .theme-rainbow{ --phosphor:#ffffff; --phosphor-soft:#dddddd; --accent:#ff79c6; }
+
   html,body{ height:100%; background:var(--bg); margin:0; }
   body{
     display:grid; place-items:center;
     color:var(--phosphor);
     font-family:"VT323","IBM Plex Mono",ui-monospace,Menlo,Monaco,Consolas,monospace;
   }
+
+  /* CRT shell */
   .crt{
     position:relative;
     width:min(var(--crt-width),var(--crt-max));
     aspect-ratio:4/3;
-    background:radial-gradient(120% 90% at 50% 10%, #0a0a0a 0%, #000 60%),#000;
+    background:
+      radial-gradient(120% 90% at 50% 10%, #0a0a0a 0%, #000 60%),
+      #000;
     border-radius:18px;
-    box-shadow:0 0 0 2px #0b0b0b inset,0 0 60px 10px #060606,0 20px 90px rgba(0,0,0,.8);
+    box-shadow:
+      0 0 0 2px #0b0b0b inset,
+      0 0 60px 10px #060606,
+      0 20px 90px rgba(0,0,0,.8);
     overflow:hidden;
     transform: perspective(1200px) rotateX(1.2deg);
   }
+  /* Curvature + vignette */
   .crt::before{
     content:"";
     position:absolute; inset:0;
-    background:radial-gradient(120% 100% at 50% 20%, transparent 40%, rgba(0,0,0,.22) 70%, rgba(0,0,0,.6) 100%);
-    pointer-events:none; mix-blend-mode:multiply;
+    background:
+      radial-gradient(120% 100% at 50% 20%, transparent 40%, rgba(0,0,0,.22) 70%, rgba(0,0,0,.6) 100%);
+    pointer-events:none;
+    mix-blend-mode:multiply;
   }
+  /* Scanlines */
   .crt::after{
     content:"";
     position:absolute; inset:0;
-    background:repeating-linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,0) 2px, rgba(255,255,255,var(--scanline-alpha)) 3px, rgba(255,255,255,0) 4px);
+    background:
+      repeating-linear-gradient(
+        to bottom,
+        rgba(255,255,255,0),
+        rgba(255,255,255,0) 2px,
+        rgba(255,255,255,var(--scanline-alpha)) 3px,
+        rgba(255,255,255,0) 4px
+      );
     opacity:.5; pointer-events:none;
   }
+
+  /* Inner bezel and glow */
   .screen{
     position:absolute; inset:18px;
     background:#000;
@@ -59,6 +85,8 @@
     box-shadow: 0 0 32px rgba(0,255,80,.05) inset;
     overflow:hidden;
   }
+
+  /* 80x25 grid */
   .rows{
     position:absolute; inset:14px;
     display:grid;
@@ -66,16 +94,23 @@
     grid-template-rows: repeat(25, var(--cell-h));
     line-height:1;
     letter-spacing:.5px;
-    text-shadow:0 0 2px var(--phosphor-soft),0 0 6px color-mix(in srgb, var(--phosphor) 50%, transparent);
+    text-shadow:
+      0 0 2px var(--phosphor-soft),
+      0 0 6px color-mix(in srgb, var(--phosphor) 50%, transparent);
     filter: saturate(1.15) contrast(1.05);
   }
+
+  /* Cursor */
   .cursor{ animation: blink 1s steps(1,end) infinite; }
   @keyframes blink { 50% { opacity:0; } }
+
+  /* ANSI helpers */
   .fg0{color:var(--ansi-0)} .fg1{color:var(--ansi-1)} .fg2{color:var(--ansi-2)}
   .fg3{color:var(--ansi-3)} .fg4{color:var(--ansi-4)} .fg5{color:var(--ansi-5)}
   .fg6{color:var(--ansi-6)} .fg7{color:var(--ansi-7)} .fg8{color:var(--ansi-8)}
   .fg9{color:var(--ansi-9)} .fg10{color:var(--ansi-10)} .fg11{color:var(--ansi-11)}
   .fg12{color:var(--ansi-12)} .fg13{color:var(--ansi-13)} .fg14{color:var(--ansi-14)} .fg15{color:var(--ansi-15)}
+
   .box{
     grid-column: 2 / span 78;
     grid-row: 3 / span 20;
@@ -84,22 +119,33 @@
     border-radius:4px;
     box-shadow: 0 0 14px color-mix(in srgb, var(--accent) 40%, transparent) inset;
   }
+
+  /* Rainbow title gradient */
   .gradient{
-    background: linear-gradient(90deg, var(--ansi-9), var(--ansi-11), var(--ansi-10), var(--ansi-14), var(--ansi-12), var(--ansi-13), var(--ansi-15));
-    -webkit-background-clip:text; background-clip:text; color: transparent;
+    background: linear-gradient(90deg,
+      var(--ansi-9), var(--ansi-11), var(--ansi-10),
+      var(--ansi-14), var(--ansi-12), var(--ansi-13), var(--ansi-15));
+    -webkit-background-clip:text;
+    background-clip:text;
+    color: transparent;
     filter: drop-shadow(0 0 6px rgba(255,255,255,.15));
   }
+
   .palette{ display:flex; gap:4px; margin-top:8px; }
   .sw{ width:18px; height:12px; box-shadow:0 0 6px rgba(255,255,255,.15) inset; }
+
   .dither{
     height:1px; margin:6px 0 8px 0;
-    background:repeating-linear-gradient(90deg, var(--phosphor) 0 2px, transparent 2px 4px);
+    background: repeating-linear-gradient(90deg, var(--phosphor) 0 2px, transparent 2px 4px);
     opacity:.7;
   }
+
+  /* Bottom bar */
   .bar{
     position:absolute; left:18px; right:18px; bottom:10px;
     display:flex; justify-content:space-between; align-items:center;
-    font-size:16px; color:var(--accent);
+    font-size:16px;
+    color:var(--accent);
     text-shadow:0 0 6px color-mix(in srgb, var(--accent) 60%, transparent);
   }
   .btns{ display:flex; gap:10px; }
@@ -110,12 +156,22 @@
   }
   button:hover{ filter:brightness(1.2); }
   button:active{ transform:translateY(1px); }
-  @keyframes vhs { 0%,100% { transform: translateX(0); } 50% { transform: translateX(.3px); } }
+
+  /* Subtle VHS wiggle */
+  @keyframes vhs {
+    0%,100% { transform: translateX(0); }
+    50% { transform: translateX(.3px); }
+  }
   .rows{ animation: vhs 1.8s infinite linear; }
+
+  /* Mobile fit */
   @media (max-width: 700px){
     :root{ --cell-w: 9px; --cell-h: 16px; }
-    .bar{ bottom:4px; font-size:14px; }
+    .bar{ bottom: 4px; font-size: 14px; }
+    #ansiTitle{ font-size: 18px; }
   }
+
+  /* Links keep CRT vibe */
   a { text-decoration: none; }
   a:hover { filter: brightness(1.25); }
   a:focus-visible { outline: 1px dashed var(--accent); outline-offset: 2px; }
@@ -125,13 +181,14 @@
   <div class="crt">
     <div class="screen">
       <div class="rows" id="rows">
+        <!-- Title box -->
         <div class="box" style="grid-column: 2 / span 78; grid-row: 3 / span 8;">
 <pre id="ansiTitle" style="margin:0; font-size:22px; line-height:1.05;">
-██████  ██████  ███████ ██████  ███████      ███████ ██    ██ ███    ██
-    ██ ██   ██ ██      ██   ██ ██           ██      ██    ██ ████   ██
- █████  ██   ██ █████   ██████  █████        █████   ██    ██ ██ ██  ██   DRFT • FUN
-    ██ ██   ██ ██      ██      ██           ██      ██    ██ ██  ██ ██   B U L L E T I N
-██████  ██████  ███████ ██      ███████      ██       ██████  ██   ████
+██████  ██████  ███████ ████████      ███████ ██    ██ ███    ██
+██   ██ ██   ██ ██         ██         ██      ██    ██ ████   ██
+██████  ██   ██ █████      ██         █████   ██    ██ ██ ██  ██     D R F T . F U N
+██      ██   ██ ██         ██         ██      ██    ██ ██  ██ ██
+██       ██████  ███████    ██         ██        ██████  ██   ████
 </pre>
 <div class="dither"></div>
 <div class="palette">
@@ -144,25 +201,30 @@
   <div class="sw" style="background:var(--ansi-15)"></div>
 </div>
         </div>
+
+        <!-- Menu box -->
         <div class="box" style="grid-column: 2 / span 78; grid-row: 12 / span 10;">
 <pre style="margin:0; font-size:18px;">
 <span class="fg12">╔══════════════════════════════════════════════════════════════════════════════╗</span>
 <span class="fg12">║</span> <span class="gradient" style="font-weight:700;">WELCOME TO THE DRIFT // PUBLIC ACCESS NODE</span>                            <span class="fg12">║</span>
 <span class="fg12">╠══════════════════════════════════════════════════════════════════════════════╣</span>
-<span class="fg14"> 1</span> <a href="https://vcrprophet.substack.com" target="_blank" class="fg15" data-hotkey="1">VCR PROPHET</a>     <span class="fg7">– signal leaks, essays, and weird transmissions</span>
-<span class="fg14"> 2</span> <a href="https://dthstp.com" target="_blank" class="fg15" data-hotkey="2">DCPN</a>            <span class="fg7">– Deathstep Communications Podcast Network</span>
-<span class="fg14"> 3</span> <a href="https://nulltone.tv" target="_blank" class="fg15" data-hotkey="3">NULLTONE.TV</a>     <span class="fg7">– alt-streaming, glitch, lostform archives</span>
-<span class="fg14"> 4</span> <a href="https://vhsstepdad.com" target="_blank" class="fg15" data-hotkey="4">VHS STEP DAD</a>   <span class="fg7">– analog dreams, TikTok transmissions</span>
-<span class="fg14"> 5</span> <a href="mailto:uplink@fladrycreative.com" class="fg15" data-hotkey="5">U P L I N K</a>     <span class="fg7">– submit files, art packs, and ghost signals</span>
-<span class="fg14"> 6</span> <a href="https://fladrycreative.com" target="_blank" class="fg15" data-hotkey="6">FLADRY CREATIVE</a><span class="fg7"> – HQ + everything else</span>
+<span class="fg14"> 1</span> <a href="https://vcrprophet.substack.com" target="_blank" class="fg15" data-hotkey="1">VCR PROPHET</a>     <span class="fg7">– essays, signal leaks, and updates from the stack</span>
+<span class="fg14"> 2</span> <a href="https://vhsstepdad.com" target="_blank" class="fg15" data-hotkey="2">VHS STEP DAD</a>    <span class="fg7">– analog dreams, shortform glitches, and tape noise</span>
+<span class="fg14"> 3</span> <a href="https://medium.com/@robbisstatic" target="_blank" class="fg15" data-hotkey="3">@ROBBISSTATIC (MEDIUM)</a> <span class="fg7">– longer essays, project logs, behind-the-scenes</span>
+<span class="fg14"> 4</span> <a href="https://nulltone.tv" target="_blank" class="fg15" data-hotkey="4">NULLTONE.TV</a>     <span class="fg7">– alt-streaming experiments, lostform, broadcast errors</span>
+<span class="fg14"> 5</span> <a href="https://dthstp.com" target="_blank" class="fg15" data-hotkey="5">DCPN</a>            <span class="fg7">– Deathstep Communications Podcast Network</span>
+<span class="fg14"> 6</span> <a href="https://fladrycreative.com" target="_blank" class="fg15" data-hotkey="6">FLADRY CREATIVE</a><span class="fg7"> – studio HQ, client work, contact</span>
 <span class="fg12">╚══════════════════════════════════════════════════════════════════════════════╝</span>
-<span class="fg7">Tip:</span> Press <span class="fg11">[R]</span> for Rainbow mode, <span class="fg11">[G]</span> Green, <span class="fg11">[A]</span> Amber, <span class="fg11">[I]</span> Ice.
+
+<span class="fg7">Tip:</span> Press <span class="fg11">[R]</span> for Rainbow mode, <span class="fg11">[G]</span> Green, <span class="fg11">[A]</span> Amber, <span class="fg11">[I]</span> Ice. Press <span class="fg11">[1–6]</span> to jump.
 <span class="fg7">SYSOP:</span> ECHOMOX online. Be kind, rewind. <span class="cursor">▮</span>
 </pre>
         </div>
       </div>
+
+      <!-- Bottom bar -->
       <div class="bar">
-        <div>DRFT.FUN // BBS STYLE SKIN v1.0</div>
+        <div>DRFT.FUN // BBS STYLE SKIN v1.1</div>
         <div class="btns">
           <button data-theme="green" title="Green phosphor">GREEN</button>
           <button data-theme="amber" title="Amber monochrome">AMBER</button>
@@ -172,7 +234,9 @@
       </div>
     </div>
   </div>
+
 <script>
+  /* Theme switching */
   const body = document.body;
   const setTheme = t => {
     body.classList.remove('theme-amber','theme-ice','theme-rainbow');
@@ -181,11 +245,15 @@
   document.querySelectorAll('button[data-theme]').forEach(b=>{
     b.addEventListener('click', ()=> setTheme(b.dataset.theme));
   });
-  const keyMap = { g:'green', a:'amber', i:'ice', r:'rainbow' };
   addEventListener('keydown', (e)=>{
     const k = e.key.toLowerCase();
-    if(keyMap[k]) setTheme(keyMap[k]);
+    if (k === 'g') setTheme('green');
+    if (k === 'a') setTheme('amber');
+    if (k === 'i') setTheme('ice');
+    if (k === 'r') setTheme('rainbow');
   });
+
+  /* Per-character rainbow gradient for the ASCII art title */
   (function rainbowize(){
     const el = document.getElementById('ansiTitle');
     const lines = el.textContent.replace(/\r/g,'').split('\n');
@@ -196,7 +264,10 @@
     ];
     function lerpColor(a,b,t){
       const pa = hexToRgb(a), pb = hexToRgb(b);
-      return `rgb(${Math.round(pa.r + (pb.r-pa.r)*t)},${Math.round(pa.g + (pb.g-pa.g)*t)},${Math.round(pa.b + (pb.b-pa.b)*t)})`;
+      const r = Math.round(pa.r + (pb.r-pa.r)*t);
+      const g = Math.round(pa.g + (pb.g-pa.g)*t);
+      const b2= Math.round(pa.b + (pb.b-pa.b)*t);
+      return `rgb(${r},${g},${b2})`;
     }
     function hexToRgb(h){
       const x = h.replace('#','');
@@ -204,6 +275,7 @@
       return { r:parseInt(i.slice(0,2),16), g:parseInt(i.slice(2,4),16), b:parseInt(i.slice(4,6),16) };
     }
     function getCSS(name){ return getComputedStyle(document.documentElement).getPropertyValue(name).trim(); }
+
     let out = '';
     for(let r=0;r<lines.length;r++){
       const line = lines[r];
@@ -220,6 +292,8 @@
     }
     el.innerHTML = out;
   })();
+
+  /* BBS number hotkeys (1–6) with tiny flash */
   (function bbsHotkeys(){
     const map = {};
     document.querySelectorAll('a[data-hotkey]').forEach(a=>{
@@ -227,13 +301,31 @@
       map[k] = a;
       if(!a.title) a.title = `Press [${k}]`;
     });
+
     function flash(el){
       const prev = el.style.textShadow;
       el.style.textShadow = '0 0 6px #fff, 0 0 16px #0ff';
       setTimeout(()=>{ el.style.textShadow = prev; }, 120);
     }
+
     addEventListener('keydown', (e)=>{
       const t = e.target;
       if (t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.isContentEditable)) return;
       const key = e.key;
       if (map[key]) {
+        e.preventDefault();
+        const a = map[key];
+        flash(a);
+        const href = a.getAttribute('href');
+        const target = a.getAttribute('target') || '_self';
+        if (href.startsWith('mailto:')) {
+          window.location.href = href;
+        } else {
+          window.open(href, target);
+        }
+      }
+    });
+  })();
+</script>
+</body>
+</html>
