@@ -153,8 +153,9 @@ body:not(.theme-rainbow) .v{
 /* Footer bar inside screen */
 .keys-line {
   text-align: center;
-  font-size: clamp(10px, 3.2vw, 14px);
+  font-size: clamp(10px, 3vw, 14px);
 }
+
 .footer {
   display: flex;
   flex-direction: column;
@@ -162,18 +163,25 @@ body:not(.theme-rainbow) .v{
   gap: 6px;
   margin: 12px auto 0;
   width: min(760px, 86vw);
-}  display:flex; gap:14px; flex-wrap:wrap; align-items:center;
-  justify-content:center;
-  margin: 12px auto 0;
-  width:min(760px, 86vw);
-  font-size: clamp(11px, 1.3vw, 15px);
-}
-.k{
-  padding:1px 6px; border:1px solid var(--crt-accent); border-radius:4px;
-  box-shadow: 0 0 6px color-mix(in srgb, var(--crt-accent) 35%, transparent) inset;
-  background:#000; color:var(--crt-accent);
 }
 
+.k {
+  padding: 1px 6px;
+  border: 1px solid var(--crt-accent);
+  border-radius: 4px;
+  box-shadow: 0 0 6px color-mix(in srgb, var(--crt-accent) 35%, transparent) inset;
+  background: #000;
+  color: var(--crt-accent);
+  font-size: 0.95em; /* slightly smaller by default */
+}
+
+/* Even smaller on tiny screens */
+@media (max-width: 480px) {
+  .k {
+    padding: 0 4px;
+    font-size: 0.85em;
+  }
+}
 /* Theme buttons row */
 .themebar{
   display:flex; gap:8px; justify-content:center;
@@ -309,9 +317,7 @@ html,body{ overflow-x:hidden; }
       <span class="envelope">✉</span> robb.fladry</a> online.<br>
     Be kind, rewind.
   </p>
-</div>
-
-        <!-- Theme buttons -->
+</div>        <!-- Theme buttons -->
         <div class="themebar">
           <button data-theme="rainbow" title="Rainbow">RAINBOW</button>
           <button data-theme="green"   title="Green phosphor">GREEN</button>
